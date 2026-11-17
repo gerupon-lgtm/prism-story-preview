@@ -1,5 +1,5 @@
 // 全文は storyboard-draft の第3章。第10章の記憶・和解の境界を優先。文言は全て仮。
-export const VERSION = '0.1.4';
+export const VERSION = '0.1.6';
 export const blocks = [
   {id:'P', title:'残された鐘', position:'序 · 連続プレイ開始前', after:'このあと、最初の光の道へ。1〜3面のプレイは試作では省略します。'},
   {id:'M1', title:'応えない道', position:'挿話 · 4面の前', after:'このあと、故障の解説と4〜5面へ。試作では省略します。'},
@@ -13,20 +13,20 @@ export const blocks = [
   {id:'E', title:'余韻の向こうへ', position:'結末 · 42面クリア後', after:''},
 ];
 export const slides = [
-  {id:'P1',block:'P',era:'むかし · 鍛冶場',scene:'forge',words:'むかし、ある鍛冶場で、ハンマーが鐘を打っていたと伝えられています。二つずつ重ねて鳴らすと、澄んだ響きが生まれました。',cues:[[0.3,{bells:[12]}],[1.6,{bells:[12,6]}]]},
-  {id:'P2',block:'P',era:'むかし · 濁った響き',scene:'order',words:'ただ、大きさの近い二つの鐘を同時に鳴らすと、響きが濁ったのです。',cues:[[0.3,{bells:[9,8]}]]},
+  {id:'P1',block:'P',era:'むかし · 鍛冶場',scene:'forge',words:'むかし、ある鍛冶場でハンマーを振るって鐘を鍛えていました。できあがった鐘を鳴らすと澄んだ音が響きました。二つずつ重ねて鳴らすと美しい響きが生まれました。'},
+  {id:'P2',block:'P',era:'むかし · 濁った響き',scene:'order',words:'ところが大きさの近い二つの鐘を同時に鳴らしたときだけ、響きが濁ったのです。',cues:[[0.3,{bells:[9,8]}]]},
   {id:'P3',block:'P',era:'むかし · 閉ざされた響き',scene:'sealed',words:'教団はこうした響きを「不浄」と呼び、盾・剣・鎧の三種類の武具へ分けて封じました。',note:'封音する場面の構図は仮案'},
-  {id:'P4',block:'P',era:'時を経て · 遠い祭壇',scene:'altar',words:'鍛えられた鐘のいくつかは、のちに遠い祭壇へ運ばれました。ひとつひとつは澄んだ一音。あとに残るのは、余韻です。',cues:[[0.35,72]]},
+  {id:'P4',block:'P',era:'時を経て · 遠い祭壇',scene:'altar',words:'鍛えられた鐘のいくつかは、のちに遠い祭壇へ運ばれました。ひとつひとつは澄んだ一音。あとに残るのは、余韻です。'},
   {id:'P5',block:'P',era:'いま · 夜空の遺跡',scene:'broken',words:'いま、この夜空では、鐘へ続く光の道が途切れています。'},
   {id:'P6',block:'P',era:'いま · 夜空の遺跡',scene:'invitation',speaker:true,words:'あの鐘へ、星の光を届けていただけますか。光が届けば、きっと応えてくれるはずです。'},
   {id:'P7',block:'P',era:'いま · 最初の祭壇へ',scene:'departure',speaker:true,words:'まずは、あの一音から。わたしも一緒に、道をたどりましょう。'},
   {id:'M1',block:'M1',era:'いま · 天文台への道',scene:'fault',words:'長い時を経た遺跡では、昨日まで通じていた道が、今日は応えないこともあります。'},
-  {id:'M2',block:'M2',era:'いま · 天文台',scene:'repeat',speaker:true,words:'……また、応えましたね。ひとつの鐘にも、いくつかの光が届いているようです。',cues:[[0.3,72],[1.4,72]]},
-  {id:'B1-1',block:'B1',era:'いま · 星渡りの回廊',scene:'far',words:'最初の鐘が鳴ると、遠くにも、星の光を待つ祭壇が見えてきました。',cues:[[0.3,72]]},
+  {id:'M2',block:'M2',era:'いま · 天文台',scene:'repeat',speaker:true,words:'……また、応えましたね。ひとつの鐘にも、いくつかの光が届いているようです。'},
+  {id:'B1-1',block:'B1',era:'いま · 星渡りの回廊',scene:'far',words:'最初の鐘が鳴ると、遠くにも、星の光を待つ祭壇が見えてきました。'},
   {id:'B1-2',block:'B1',era:'いま · 星渡りの回廊',scene:'many',speaker:true,words:'あちらの鐘も、まだ静かなままです。ひとつずつ、応えてもらいましょう。'},
-  {id:'B2-1',block:'B2',era:'いま · 月映りの水殿',scene:'water',words:'先の鐘が鳴り終わる、その少し前に。別の鐘が、静かに応えました。',cues:[[0.3,72],[1.7,79]]},
-  {id:'B2-2',block:'B2',era:'いま · 余韻の水面',scene:'echo',speaker:true,words:'離れた場所の音も、余韻の中では出会えるのですね。',cues:[[0.3,72],[1.7,79]]},
-  {id:'B3-1',block:'B3',era:'いまから、かつての鍛冶場へ',scene:'memory',words:'この鐘たちも、かつては、同じ鍛冶場で鳴っていたのでしょう。打たれた順に、一音、また一音。',cues:[[0.3,72],[1.1,79],[1.9,84]]},
+  {id:'B2-1',block:'B2',era:'いま · 月映りの水殿',scene:'water',words:'先の鐘が鳴り終わる、その少し前に。別の鐘が、静かに応えました。'},
+  {id:'B2-2',block:'B2',era:'いま · 余韻の水面',scene:'echo',speaker:true,words:'離れた場所の音も、余韻の中では出会えるのですね。'},
+  {id:'B3-1',block:'B3',era:'いまから、かつての鍛冶場へ',scene:'memory',words:'この鐘たちも、かつては、同じ鍛冶場で鳴っていたのでしょう。打たれた順に、一音、また一音。'},
   {id:'B3-2',block:'B3',era:'いま · 星響の祭壇',scene:'remember',speaker:true,words:'「その響きにも、居場所がある」……誰かが、そう言っていました。何度も、わたしに。'},
   {id:'B4-1',block:'B4',era:'いま · 星環の帰廊',scene:'return',words:'届いた光のひとすじが、夜空へ戻っていきました。消えたのではありません。'},
   {id:'B4-2',block:'B4',era:'いま · 星環の帰廊',scene:'branch',speaker:true,words:'道は、ここで終わりではないようです。戻った光は、またどこへ向かうのでしょう。'},

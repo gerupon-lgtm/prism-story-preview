@@ -1,5 +1,5 @@
-import {VERSION,blocks,slides} from './story-data.js?v=0.1.4';
-import {Chime,BELL_SOUND} from './engine/audio.js?v=story-0.1.4';
+import {VERSION,blocks,slides} from './story-data.js?v=0.1.6';
+import {Chime,BELL_SOUND} from './engine/audio.js?v=story-0.1.6';
 
 // 独立した閲覧試作。Session、成績、保存、PWA登録には接続しない。
 const $=id=>document.getElementById(id),reader=$('reader'),scene=$('scene');
@@ -54,6 +54,9 @@ const scenes={
  future:{bg:'r:forge-ruins',art:[art('r:monochord-story',24,43,57,37),art('r:hammer',9,76,20,15,'old')],kind:'future'},
  root:{bg:'r:forge-ruins',art:[art('r:monochord-story',20,44,60,38),art('r:hammer',8,78,18,13,'old'),art('r:spirit-listening',67,18,24,59,'future-spirit')],kind:'future'},
 };
+// 星の精霊の採用絵は左向き。画像は変えず、対象が左・精霊が右になるよう座標を入れ替える。
+// many は初めから精霊が右・鐘が左なので、そのまま使う。
+const inwardScenes=new Set(['invitation','departure','repeat','echo','remember','branch','reflection','lastgate','thanks']);
 function imageEl(name,cls=''){
  const img=new Image();
  img.src=name==='spirit-guide.png'?`./public/spirit-guide.png?v=${VERSION}`:asset(name);
@@ -80,7 +83,7 @@ function lightmap(kind){
  return svg;
 }
 function drawScene(slide){
- const spec=scenes[slide.scene],holder=$('scenery');holder.replaceChildren();
+ const spec=scenes[slide.scene],holder=$('scenery'),reverseLayout=inwardScenes.has(slide.scene);holder.replaceChildren();
  scene.dataset.effect=slide.scene;scene.setAttribute('aria-label',`${slide.era}。${slide.note??''}`);
  holder.append(imageEl(spec.bg,'backdrop'));
  if(spec.kind==='forge'){const tint=document.createElement('div');tint.className='forge-tint';holder.append(tint);}
@@ -90,8 +93,8 @@ function drawScene(slide){
   }
  }
  if(spec.kind==='memory')holder.append(imageEl('r:forge-legend','memory-backdrop'));
- holder.append(lightmap(spec.kind));
- for(const item of spec.art){const img=imageEl(item.name,'art '+item.cls);Object.assign(img.style,{left:item.x+'%',top:item.y+'%',width:item.w+'%',height:item.h+'%'});holder.append(img);}
+ const light=lightmap(spec.kind);if(reverseLayout)light.style.transform='scaleX(-1)';holder.append(light);
+ for(const item of spec.art){const img=imageEl(item.name,'art '+item.cls);Object.assign(img.style,{left:(reverseLayout?100-item.x-item.w:item.x)+'%',top:item.y+'%',width:item.w+'%',height:item.h+'%'});holder.append(img);}
  if(spec.kind==='seal')for(const cls of ['seal-glow','seal-stone']){const div=document.createElement('div');div.className=cls;holder.append(div);}
  $('music-slot').hidden=!slide.music;
 }
@@ -140,7 +143,7 @@ function render(){
  $('bridge').textContent=isLastOfBlock()?block.after:'';
  $('counter').innerHTML=`${String(index+1).padStart(2,'0')} <i>/ 27</i>`;$('slide-id').textContent=slide.id;
  $('progress-fill').style.width=((index+1)/slides.length*100)+'%';
- notice=slide.music?'楽曲は未収録です。時間を決めず、手動で進めます。':sound?'この場面の音は、既存の鐘だけです。':'音なしで閲覧中。音を有効にすると既存の鐘が鳴ります。';
+ notice=slide.music?'楽曲は未収録です。時間を決めず、手動で進めます。':sound?(slide.cues?.length?'この場面では二つの鐘を同時に鳴らします。':'この場面は音なしです。'):'音なしで閲覧中。濁った響きの場面だけ二つの鐘を鳴らせます。';
  drawScene(slide);updateControls();history.replaceState(null,'',`#${slide.id}`);void playCues();
  document.title=`${slide.id} · PRISM NOTES おはなし試作 v${VERSION}`;
  for(const button of $('scene-list').querySelectorAll('[data-index]'))button.setAttribute('aria-current',String(Number(button.dataset.index)===index));
