@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080f23">
+  <title>PRISM NOTES — おはなし試作 v0.1.4</title>
+  <link rel="stylesheet" href="./story.css?v=0.1.4">
+</head>
+<body>
+  <main id="reader" class="reader" aria-label="PRISM NOTES おはなし試作">
+    <header class="toolbar">
+      <div class="brand"><span>PRISM NOTES</span><small>おはなし試作 v0.1.4 <em>語り・構図は仮案</em></small></div>
+      <nav class="tools" aria-label="閲覧の設定">
+        <button id="sound" type="button" aria-pressed="false">音：なし</button>
+        <button id="motion" type="button" aria-pressed="false">動き：通常</button>
+        <button id="chapters" type="button">場面一覧</button>
+      </nav>
+    </header>
+    <section class="spread" aria-label="物語">
+      <div id="scene" class="scene" role="img" aria-label="">
+        <div id="scenery" class="scenery"></div>
+        <div class="scene-vignette"></div>
+        <div class="scene-caption"><span id="era"></span><span id="art-note"></span></div>
+        <div id="music-slot" class="music-slot" hidden><span class="music-orbit" aria-hidden="true">♪</span><strong>エンディング曲を聴く場面</strong><span>曲は後日。この景色の中で、響きを聴きます。</span></div>
+      </div>
+      <article class="story-copy" aria-labelledby="chapter-title">
+        <div class="chapter-heading"><span id="block-position"></span><h1 id="chapter-title"></h1></div>
+        <div id="words" class="words" tabindex="0"><p id="speaker" class="speaker" hidden>星の精霊</p><p id="narration"></p></div>
+        <div class="copy-foot"><p id="bridge"></p><p id="status" role="status" aria-live="polite"></p></div>
+      </article>
+    </section>
+    <footer class="reader-controls">
+      <div class="play-tools"><button id="replay" type="button" title="今の場面を初めから再演">再演</button><button id="stop" type="button">停止</button></div>
+      <div class="progress" aria-label="現在の位置"><span id="counter">01 <i>/ 27</i></span><span id="slide-id"></span><div class="progress-track"><div id="progress-fill"></div></div></div>
+      <nav class="page-tools" aria-label="物語を進める"><button id="previous" type="button">戻る</button><button id="next" class="primary" type="button">つづき</button></nav>
+    </footer>
+  </main>
+  <dialog id="scene-menu" aria-labelledby="menu-title">
+    <div class="menu-head"><div><small>27枚を通して見るための試作</small><h2 id="menu-title">場面を選ぶ</h2></div><button id="close-menu" type="button" autofocus>閉じる</button></div>
+    <p class="menu-note">場面の移動は音と演出を止めます。課題のプレイ・操作解説は、この試作では省略しています。</p>
+    <div id="scene-list" class="scene-list"></div>
+    <div class="menu-foot"><button id="skip" type="button">この章を飛ばす</button><button id="restart" type="button">最初から見る</button><span>© SIKUMI LAB</span></div>
+  </dialog>
+  <script type="module" src="./story.js?v=0.1.4"></script>
+</body>
+</html>
