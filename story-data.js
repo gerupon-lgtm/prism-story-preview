@@ -1,5 +1,5 @@
 // 全文は storyboard-draft の第3章。第10章の記憶・和解の境界を優先。文言は全て仮。
-export const VERSION = '0.1.6';
+export const VERSION = '0.1.7';
 export const blocks = [
   {id:'P', title:'残された鐘', position:'序 · 連続プレイ開始前', after:'このあと、最初の光の道へ。1〜3面のプレイは試作では省略します。'},
   {id:'M1', title:'応えない道', position:'挿話 · 4面の前', after:'このあと、故障の解説と4〜5面へ。試作では省略します。'},

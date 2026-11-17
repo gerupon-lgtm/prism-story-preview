@@ -1,5 +1,6 @@
-import {VERSION,blocks,slides} from './story-data.js?v=0.1.6';
-import {Chime,BELL_SOUND} from './engine/audio.js?v=story-0.1.6';
+import {VERSION,blocks,slides} from './story-data.js?v=0.1.7';
+import {Chime,BELL_SOUND} from './engine/audio.js?v=story-0.1.7';
+import {SPIRIT_CUES,VOICE_LIFE,spiritVoice} from './spirit-voice.js?v=0.1.7';
 
 // 独立した閲覧試作。Session、成績、保存、PWA登録には接続しない。
 const $=id=>document.getElementById(id),reader=$('reader'),scene=$('scene');
@@ -9,8 +10,9 @@ let preference='auto';
 try{const saved=JSON.parse(localStorage.getItem('prism-notes.motion.v1'));if(saved?.version===1&&['auto','full','reduce'].includes(saved.value))preference=saved.value;}catch{/* 読めない場合は端末設定。保存は変更しない。 */}
 let reduced=preference==='reduce'||preference==='auto'&&media.matches;
 let index=Math.max(0,slides.findIndex(s=>s.id===decodeURIComponent(location.hash.slice(1))));
-let sound=false,paused=false,epoch=0,tailUntil=0,queued=false,notice='音は「音：なし」から有効にできます。';
+let sound=false,paused=false,epoch=0,tailUntil=0,queued=false,loading=false,notice='音は「音：なし」から有効にできます。';
 const timers=new Set();
+const preparedScenes=new Map();
 // 回想の4鐘の音程はROOT序章の定数に合わせる。音色はPRISMのChimeを変更せず利用。
 const ROOT_BELL_HZ={12:349.23,9:349.23*4/3,8:349.23*3/2,6:349.23*2};
 const asset=name=>name.startsWith('r:')?`./assets/${name.slice(2)}.webp?v=${VERSION}`:`./public/${name.includes('/')?name:`graphics/${name}.png`}?v=${VERSION}`;
@@ -82,9 +84,8 @@ function lightmap(kind){
  if(kind==='complete'){ellipse(640,430,260,130,'halo');for(const [cx,cy] of [[270,430],[660,390],[1060,430]])ellipse(cx,cy,35,60,'halo');}
  return svg;
 }
-function drawScene(slide){
- const spec=scenes[slide.scene],holder=$('scenery'),reverseLayout=inwardScenes.has(slide.scene);holder.replaceChildren();
- scene.dataset.effect=slide.scene;scene.setAttribute('aria-label',`${slide.era}。${slide.note??''}`);
+function buildScene(slide){
+ const spec=scenes[slide.scene],holder=document.createElement('div'),reverseLayout=inwardScenes.has(slide.scene);
  holder.append(imageEl(spec.bg,'backdrop'));
  if(spec.kind==='forge'){const tint=document.createElement('div');tint.className='forge-tint';holder.append(tint);}
  if(['complete','panorama'].includes(spec.kind)){
@@ -96,30 +97,50 @@ function drawScene(slide){
  const light=lightmap(spec.kind);if(reverseLayout)light.style.transform='scaleX(-1)';holder.append(light);
  for(const item of spec.art){const img=imageEl(item.name,'art '+item.cls);Object.assign(img.style,{left:(reverseLayout?100-item.x-item.w:item.x)+'%',top:item.y+'%',width:item.w+'%',height:item.h+'%'});holder.append(img);}
  if(spec.kind==='seal')for(const cls of ['seal-glow','seal-stone']){const div=document.createElement('div');div.className=cls;holder.append(div);}
- $('music-slot').hidden=!slide.music;
+ return holder;
+}
+function prepareScene(slide){
+ if(!preparedScenes.has(slide.scene)){
+  const holder=buildScene(slide);
+  const promise=Promise.all([...holder.querySelectorAll('img')].map(img=>img.decode())).then(()=>holder);
+  preparedScenes.set(slide.scene,promise);
+  promise.catch(()=>{if(preparedScenes.get(slide.scene)===promise)preparedScenes.delete(slide.scene);});
+ }
+ return preparedScenes.get(slide.scene);
+}
+function preloadNext(){
+ const next=slides[(index+1)%slides.length];
+ for(const key of preparedScenes.keys())if(key!==next.scene)preparedScenes.delete(key);
+ void prepareScene(next).catch(()=>{/* 先読みの失敗は、実際の移動時に再試行する。 */});
 }
 function later(fn,delay){const timer=setTimeout(()=>{timers.delete(timer);fn();},delay);timers.add(timer);return timer;}
 function stopAll(reason='stopped'){
- epoch++;for(const timer of timers)clearTimeout(timer);timers.clear();tailUntil=0;queued=false;chime.stop(reason);paused=true;reader.classList.add('paused');
+ epoch++;for(const timer of timers)clearTimeout(timer);timers.clear();tailUntil=0;queued=false;loading=false;reader.removeAttribute('aria-busy');chime.stop(reason);paused=true;reader.classList.add('paused');
 }
 function updateControls(){
  $('sound').textContent=sound?'音：あり':'音：なし';$('sound').setAttribute('aria-pressed',String(sound));
  for(const id of ['motion','motion-menu'])if($(id)){$(id).textContent=reduced?'動き：控えめ':'動き：通常';$(id).setAttribute('aria-pressed',String(reduced));}
  reader.classList.toggle('reduced',reduced);
- $('previous').disabled=index===0||queued;$('next').disabled=queued;
- $('stop').disabled=paused&&!queued;$('replay').disabled=queued;
- $('next').textContent=queued?'余韻待ち':index===slides.length-1?'最初から':isLastOfBlock()&&slides[index].block!=='E'?'次の場面へ':'つづき';
+ $('previous').disabled=index===0||queued||loading;$('next').disabled=queued||loading;
+ $('stop').disabled=paused&&!queued&&!loading;$('replay').disabled=queued||loading;
+ $('next').textContent=loading?'準備中':queued?'余韻待ち':index===slides.length-1?'最初から':isLastOfBlock()&&slides[index].block!=='E'?'次の場面へ':'つづき';
  $('status').textContent=notice;
 }
 function isLastOfBlock(){return !slides[index+1]||slides[index+1].block!==slides[index].block;}
 async function playCues(){
  const slide=slides[index],ticket=epoch;
- if(!sound||paused||document.hidden||!slide.cues?.length)return;
- tailUntil=performance.now()+500+(slide.cues.at(-1)[0]+BELL_SOUND.durationSeconds+.15)*1000;
+ if(!sound||paused||document.hidden||(!slide.cues?.length&&!slide.speaker))return;
+ const length=slide.speaker?SPIRIT_CUES.at(-1).at+.02+VOICE_LIFE+.15:slide.cues.at(-1)[0]+BELL_SOUND.durationSeconds+.15;
+ tailUntil=performance.now()+500+length*1000;
  try{await chime.enable();}catch{if(ticket!==epoch)return;sound=false;chime.mute();tailUntil=0;notice='音を開始できませんでした。絵と文章で続けられます。';updateControls();return;}
  if(ticket!==epoch||paused||document.hidden||!sound){if(!sound)chime.mute();return;}
- const started=performance.now();tailUntil=started+(slide.cues.at(-1)[0]+BELL_SOUND.durationSeconds+.15)*1000;
- for(const [at,pitch] of slide.cues)later(()=>{
+ const started=performance.now();tailUntil=started+length*1000;
+ if(slide.speaker){
+  if(chime.context.state!=='running'){tailUntil=0;notice='音の準備ができませんでした。「再演」で試せます。';updateControls();return;}
+  const start=chime.context.currentTime+.02;
+  for(const cue of SPIRIT_CUES)spiritVoice(chime,cue.hz,start+cue.at);
+ }
+ for(const [at,pitch] of slide.cues??[])later(()=>{
   if(ticket!==epoch||paused||!sound||document.hidden)return;
   if(pitch.bells){
    const start=chime.context.currentTime+.05;
@@ -132,31 +153,40 @@ async function playCues(){
   }else chime.strike({frequencyHz:440*2**((pitch-69)/12)});
   tailUntil=Math.max(tailUntil,performance.now()+(BELL_SOUND.durationSeconds+.15)*1000);
  },at*1000);
- later(()=>{if(ticket===epoch&&!queued){notice='鐘の余韻が静かになりました。';updateControls();}},tailUntil-performance.now());
- notice='鐘と余韻を聴けます。通常のページ送りは余韻を待ちます。';updateControls();
+ later(()=>{if(ticket===epoch&&!queued){notice='余韻が静かになりました。';updateControls();}},tailUntil-performance.now());
+ notice=slide.speaker?'星の精霊の声を聴けます。通常のページ送りは余韻を待ちます。':'二つの鐘と余韻を聴けます。通常のページ送りは余韻を待ちます。';updateControls();
 }
-function render(){
- const slide=slides[index],block=blocks.find(b=>b.id===slide.block);paused=false;reader.classList.remove('paused');
+async function render(target=index){
+ const ticket=epoch,slide=slides[target];loading=true;reader.setAttribute('aria-busy','true');notice='場面の絵を準備しています。';updateControls();
+ let prepared;
+ try{prepared=await prepareScene(slide);}catch{
+  if(ticket!==epoch)return;loading=false;reader.removeAttribute('aria-busy');notice='絵を読み込めませんでした。「再演」で試せます。';updateControls();return;
+ }
+ if(ticket!==epoch)return;
+ index=target;loading=false;reader.removeAttribute('aria-busy');
+ const block=blocks.find(b=>b.id===slide.block);paused=false;reader.classList.remove('paused');
  $('era').textContent=slide.era;$('art-note').textContent=slide.note??'';
  $('block-position').textContent=block.position;$('chapter-title').textContent=block.title;
  $('narration').textContent=slide.words;$('speaker').hidden=!slide.speaker;$('words').scrollTop=0;
  $('bridge').textContent=isLastOfBlock()?block.after:'';
  $('counter').innerHTML=`${String(index+1).padStart(2,'0')} <i>/ 27</i>`;$('slide-id').textContent=slide.id;
  $('progress-fill').style.width=((index+1)/slides.length*100)+'%';
- notice=slide.music?'楽曲は未収録です。時間を決めず、手動で進めます。':sound?(slide.cues?.length?'この場面では二つの鐘を同時に鳴らします。':'この場面は音なしです。'):'音なしで閲覧中。濁った響きの場面だけ二つの鐘を鳴らせます。';
- drawScene(slide);updateControls();history.replaceState(null,'',`#${slide.id}`);void playCues();
+ notice=slide.music?'楽曲は未収録です。時間を決めず、手動で進めます。':sound?(slide.speaker?'星の精霊の声を鳴らします。':slide.cues?.length?'この場面では二つの鐘を同時に鳴らします。':'この場面は音なしです。'):'音なしで閲覧中。星の精霊の声と、濁った響きの二つの鐘を鳴らせます。';
+ scene.dataset.effect=slide.scene;scene.setAttribute('aria-label',`${slide.era}。${slide.note??''}`);
+ $('scenery').replaceChildren(...prepared.childNodes);preparedScenes.delete(slide.scene);$('music-slot').hidden=!slide.music;
+ updateControls();history.replaceState(null,'',`#${slide.id}`);void playCues();preloadNext();
  document.title=`${slide.id} · PRISM NOTES おはなし試作 v${VERSION}`;
  for(const button of $('scene-list').querySelectorAll('[data-index]'))button.setAttribute('aria-current',String(Number(button.dataset.index)===index));
 }
 function show(target,{immediate=false}={}){
- if(queued)return;
+ if(queued||loading)return;
  if(!immediate&&sound&&!paused&&tailUntil>performance.now()){
   queued=true;notice='余韻のあとに進みます。「停止」でこのページに留まれます。';updateControls();
   const ticket=epoch;
   const finish=()=>{if(ticket!==epoch)return;const remaining=tailUntil-performance.now();if(remaining>20){later(finish,remaining+20);return;}queued=false;show(target,{immediate:true});};
   later(finish,tailUntil-performance.now()+20);return;
  }
- stopAll('navigation');index=Math.max(0,Math.min(slides.length-1,target));render();
+ stopAll('navigation');void render(Math.max(0,Math.min(slides.length-1,target)));
 }
 $('previous').addEventListener('click',()=>show(index-1));
 $('next').addEventListener('click',()=>show(index===slides.length-1?0:index+1));
@@ -193,5 +223,5 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){stopAll('h
 window.addEventListener('pagehide',()=>{stopAll('pagehide');void chime.context?.suspend();});
 window.addEventListener('hashchange',()=>{const target=slides.findIndex(s=>s.id===decodeURIComponent(location.hash.slice(1)));if(target>=0&&target!==index)show(target,{immediate:true});});
 // 検査用の読取専用情報。ゲーム状態を操作する入口は設けない。
-Object.defineProperty(window,'__storyPreview',{get:()=>({version:VERSION,index,id:slides[index].id,total:slides.length,sound,paused,reduced,queued,timers:timers.size,voices:chime.voices.size,bellTimes:[...chime.bellVoices].map(v=>v.time),pendingBells:chime.pendingBells.length,tailRemaining:Math.max(0,tailUntil-performance.now()),audioState:chime.context?.state??'uncreated'})});
+Object.defineProperty(window,'__storyPreview',{get:()=>({version:VERSION,index,id:slides[index].id,total:slides.length,sound,paused,reduced,queued,loading,timers:timers.size,voices:chime.voices.size,spiritVoices:[...chime.voices].filter(v=>v.kind==='spirit').map(v=>({hz:v.hz,time:v.time,end:v.end})),bellTimes:[...chime.bellVoices].map(v=>v.time),pendingBells:chime.pendingBells.length,tailRemaining:Math.max(0,tailUntil-performance.now()),audioState:chime.context?.state??'uncreated'})});
 render();

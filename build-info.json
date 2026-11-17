@@ -1,5 +1,5 @@
 {
-  "version": "0.1.6",
+  "version": "0.1.7",
   "kind": "independent-story-prototype",
   "baseGameVersion": "0.103.0",
   "assets": {
@@ -25,7 +25,7 @@
     "engine/voices.js": "bd11ca843845bcd22921c23c8b57dd31ec1769433b8722603631ea8f25b14864",
     "fonts/montserrat-500.ttf": "637639da93fdd9178e52662cce4bd5a59a544eb60677bb6ef9f89bc472607e5d",
     "fonts/OFL.txt": "8b7141c03fa4f8d44e6345d5d4931709290f0f67875e452e95ac1fd3a027802e",
-    "index.html": "f8dc53772e396d737ceb6e1cde20dd0b4f00bd05acde0dd80498097b1b3cd8cd",
+    "index.html": "56301a3f6bd0fa15d1472b18d16695d330dfe77252e207bf659280b9ce6425e2",
     "public/graphics/goal.png": "79ef581e9d6db0211fe7cc06eb642749d989517a9d0081f827e6e03378f85558",
     "public/graphics/mirror.png": "5b49f16ad3242a7e651325538008e1d8518c9d1304ac3e0689db3351d5db3219",
     "public/graphics/moonmirror.png": "b9c71d23344738fa4486350c956439201aeb2b6691700a67d0794557d57845a3",
@@ -39,9 +39,10 @@
     "public/graphics/starreturn.png": "4c51f757eb6aa4c6d19ab974a3f0d1ed32346da47765f779868b4d744cf6f2cc",
     "public/graphics/starwalk.png": "d1e6b74dc5be815e65eeea57e503c3c55f07f068af9b27dcef315d5c59cf76fd",
     "public/spirit-guide.png": "6f7afa6f440950ca1702256ccda0b735bac840c99e14a2a411bf6c19ad4a9aa3",
-    "README.md": "07d3a1f5ff0af54e374abae6da3038826a7d5f17325c0e87cf7520a11d77223a",
-    "story-data.js": "748bb6fc6be9810e2cd6d05bdd8fae63a89ec24a058338c20c3a49ebdb9d4f57",
-    "story.css": "03306897c124a0cc25a8f70865c9aacf003d2d974526f93055246e81a8497bca",
-    "story.js": "461794125f30ab7a7d26e9e8f1821c0c9b4c996f084e0769ace5b86a86916463"
+    "README.md": "842d67a6499f8d1a5e29d19c6d4494f2ad0d8d80542622d6132f375a7289cc5b",
+    "spirit-voice.js": "1553ef4d14c0494aef7f8e4665897a2e52e014c7bcf94f7e6a53733d40735214",
+    "story-data.js": "05a487c27d27d611182260e16579a42e2300dd9f9a8905014a07e77e598e0899",
+    "story.css": "2fcdf0e46d70c7c2841621bd679892a7d5f8b3dafd4c8da764a9154c9c246a40",
+    "story.js": "630d6db11ebbc1aafcc34a19bbe1863e8b07a0bb2a16e3016e0da894008f5e95"
   }
 }

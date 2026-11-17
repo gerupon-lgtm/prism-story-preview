@@ -1,6 +1,6 @@
 # PRISM NOTES おはなし試作
 
-検証 v0.1.6。全27枚を手動で読み進める、独立した確認用の試作です。語り・構図は仮案です。
+検証 v0.1.7。全27枚を手動で読み進める、独立した確認用の試作です。語り・構図は仮案です。
 
 https://gerupon-lgtm.github.io/prism-story-preview/
 
@@ -8,7 +8,7 @@ https://gerupon-lgtm.github.io/prism-story-preview/
 
 本体のプレイ・操作解説・採点・成績・保存データには接続しません。ROOT NOTESの本体も変更しません。
 
-既存PRISM素材とROOT採用済み素材を使用。音はPRISMの既存の合成処理を使用（FMオペラボ由来）。Montserratはfonts/OFL.txtのライセンスに従います。
+既存PRISM素材とROOT採用済み素材を使用。鐘はPRISMの既存の合成処理を使用（FMオペラボ由来）。星の精霊が話す10場面ではROOTのグラスハープを、弦の精霊の声から増四度上へ移して使用。画像は次の1枚を先読みし、準備後に絵と文章を切り替えます。Montserratはfonts/OFL.txtのライセンスに従います。
 
 PCブラウザでの確認と、実機の見え方・指操作・聴感は別です。
 
