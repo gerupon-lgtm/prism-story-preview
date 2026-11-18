@@ -1,6 +1,6 @@
-import {VERSION,blocks,slides} from './story-data.js?v=0.1.8';
-import {Chime,BELL_SOUND} from './engine/audio.js?v=story-0.1.8';
-import {SPIRIT_CUES,VOICE_LIFE,spiritVoice} from './spirit-voice.js?v=0.1.8';
+import {VERSION,blocks,slides} from './story-data.js?v=0.1.9';
+import {Chime,BELL_SOUND} from './engine/audio.js?v=story-0.1.9';
+import {SPIRIT_CUES,VOICE_LIFE,spiritVoice} from './spirit-voice.js?v=0.1.9';
 
 // 独立した閲覧試作。Session、成績、保存、PWA登録には接続しない。
 const $=id=>document.getElementById(id),reader=$('reader'),scene=$('scene');

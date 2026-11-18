@@ -1,5 +1,5 @@
 {
-  "version": "0.1.8",
+  "version": "0.1.9",
   "kind": "independent-story-prototype",
   "baseGameVersion": "0.103.0",
   "assets": {
@@ -25,7 +25,7 @@
     "engine/voices.js": "bd11ca843845bcd22921c23c8b57dd31ec1769433b8722603631ea8f25b14864",
     "fonts/montserrat-500.ttf": "637639da93fdd9178e52662cce4bd5a59a544eb60677bb6ef9f89bc472607e5d",
     "fonts/OFL.txt": "8b7141c03fa4f8d44e6345d5d4931709290f0f67875e452e95ac1fd3a027802e",
-    "index.html": "3b6931015764bbad9358d71e23d922b384eb45376d4ab5e7080facf579d9fa0a",
+    "index.html": "993b414c6b6950a3a4e58e95b52e992d877d37abb060d33973828c25d9ad86dc",
     "public/graphics/goal.png": "79ef581e9d6db0211fe7cc06eb642749d989517a9d0081f827e6e03378f85558",
     "public/graphics/mirror.png": "5b49f16ad3242a7e651325538008e1d8518c9d1304ac3e0689db3351d5db3219",
     "public/graphics/moonmirror.png": "b9c71d23344738fa4486350c956439201aeb2b6691700a67d0794557d57845a3",
@@ -39,10 +39,10 @@
     "public/graphics/starreturn.png": "4c51f757eb6aa4c6d19ab974a3f0d1ed32346da47765f779868b4d744cf6f2cc",
     "public/graphics/starwalk.png": "d1e6b74dc5be815e65eeea57e503c3c55f07f068af9b27dcef315d5c59cf76fd",
     "public/spirit-guide.png": "6f7afa6f440950ca1702256ccda0b735bac840c99e14a2a411bf6c19ad4a9aa3",
-    "README.md": "ce8ba66d4b86e680255a48ed537e79adbeb53a0d88648c41a5dd8a82752267ae",
+    "README.md": "0a7f0be0a93fdf8bf52c2958e12b296bd1165fa14670ee7dc00eaef7cd2cb511",
     "spirit-voice.js": "1553ef4d14c0494aef7f8e4665897a2e52e014c7bcf94f7e6a53733d40735214",
-    "story-data.js": "b1184ccc7bfd2860a3afbc552d5bbdf5e1b8652dfbc645c07b6c7c1c541f4a93",
-    "story.css": "cebb98762eeda3a77d591e33f1c43bf0d71393b9390e8502c83bc194186265df",
-    "story.js": "031d789b9945770f562c9d879e6c92424c87863151a4f1ad144cf25088d1585f"
+    "story-data.js": "05bd2dbb1c68ad83f97ae3c9ec24abb4e57aa4842900af126588757225db15a7",
+    "story.css": "bc5286ddbf3e3a7648e0bc51695c9e376a0179790bdfeb8a66ae78ee8faecc40",
+    "story.js": "7cd067f724e1c8a0cf123616ce767d8c65521c7ae36aa5b5bfdf3dca3c9d2460"
   }
 }
